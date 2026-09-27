@@ -43,7 +43,29 @@ router.post("/signup", validate(signupSchema), signup);
 router.post(
   "/login",
   validate(loginSchema),
-  passport.authenticate("local", { session: false }),
+  (req, res, next) => {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) return next(err);
+
+      // If authentication failed (no user returned)
+      if (!user) {
+        // Check if the reason was our custom 'unverified' message
+        if (info && info.message === "unverified") {
+          // Send 403 so the frontend knows to redirect!
+          return res.status(403).json({ message: "unverified" });
+        }
+        // Otherwise, it was a bad password or missing user
+        return res
+          .status(401)
+          .json({ message: info?.message || "Invalid email or password" });
+      }
+
+      // If authentication succeeded!
+      // Attach the user to the request object and call next() to trigger loginSuccess
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   loginSuccess,
 );
 

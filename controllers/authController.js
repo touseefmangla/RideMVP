@@ -159,6 +159,8 @@ export const verifyEmail = async (req, res) => {
     user.emailOtpExpires = undefined;
     await user.save();
 
+    issueCookie(res, user);
+
     res.status(200).json({ message: "Email verified" });
   } catch (error) {
     res.status(500).json({ error: error.message });
