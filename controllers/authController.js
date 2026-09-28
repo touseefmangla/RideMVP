@@ -75,6 +75,10 @@ export const loginSuccess = (req, res) => {
       id: req.user._id,
       name: req.user.name,
       activeRole: req.user.activeRole,
+      phone: req.user.phone,
+      vehicleModel: req.user.vehicleModel,
+      vehicleNumber: req.user.vehicleNumber,
+      vehicleColor: req.user.vehicleColor,
     },
   });
 };
