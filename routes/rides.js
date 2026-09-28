@@ -24,49 +24,50 @@ const router = express.Router();
 router.post(
   "/",
   requireAuth,
-  requireRole("rider"),
+  requireRole("Rider"),
   validate(createRideSchema),
   createRide,
 );
-router.get("/nearby", requireAuth, requireRole("driver"), getNearbyRides);
+router.get("/nearby", requireAuth, requireRole("Driver"), getNearbyRides);
 
 router.get("/:id", requireAuth, validateParams(rideIdParamSchema), getRideById);
 
 router.patch(
   "/:id/offer",
   requireAuth,
-  requireRole("rider"),
+  requireRole("Rider"),
   validateParams(rideIdParamSchema),
   validate(updateOfferedFareSchema),
   updateOfferedFare,
 );
 
-router.patch("/:id/accept", requireAuth, requireRole("driver"), acceptRide);
+router.patch("/:id/accept", requireAuth, requireRole("Driver"), acceptRide);
 
 router.patch(
   "/:id/arrive",
   requireAuth,
-  requireRole("driver"),
+  requireRole("Driver"),
   validateParams(rideIdParamSchema),
   arriveRide,
 );
 router.patch(
   "/:id/start",
   requireAuth,
-  requireRole("driver"),
+  requireRole("Driver"),
   validateParams(rideIdParamSchema),
   startRide,
 );
 router.patch(
   "/:id/complete",
   requireAuth,
-  requireRole("driver"),
+  requireRole("Driver"),
   validateParams(rideIdParamSchema),
   completeRide,
 );
 router.patch(
   "/:id/cancel",
   requireAuth,
+  requireRole("Driver"),
   validateParams(rideIdParamSchema),
   cancelRide,
 );

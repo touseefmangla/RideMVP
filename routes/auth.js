@@ -104,14 +104,14 @@ router.post(
 router.patch(
   "/online",
   requireAuth,
-  requireRole("driver"),
+  requireRole("Driver"),
   validate(updateDriverStatusSchema),
   updateDriverStatus,
 );
 router.patch(
   "/vehicle",
   requireAuth,
-  requireRole("driver"),
+  requireRole("Driver"),
   validate(vehicleInfoSchema),
   updateVehicleInfo,
 );
