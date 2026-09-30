@@ -8,7 +8,7 @@ const roleEnum = z.enum(["Rider", "Driver"], {
 export const signupSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
   email: z.string().trim().email("Enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   role: roleEnum,
 });
 
@@ -33,7 +33,7 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
   email: z.string().trim().email("Enter a valid email address"),
   token: z.string().min(1, "Token is required"),
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export const updatePhoneSchema = z.object({
