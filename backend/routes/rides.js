@@ -67,7 +67,6 @@ router.patch(
 router.patch(
   "/:id/cancel",
   requireAuth,
-  requireRole("Driver"),
   validateParams(rideIdParamSchema),
   cancelRide,
 );
