@@ -4,6 +4,25 @@ import crypto from "crypto";
 import { sendEmail } from "../lib/mailer.js";
 import { issueAuthCookie } from "../lib/auth.js";
 
+function buildUserResponse(user) {
+  if (!user) return null;
+
+  // Convert Mongoose document to a plain object if needed
+  const raw = typeof user.toObject === "function" ? user.toObject() : user;
+
+  return {
+    id: raw._id ? raw._id.toString() : raw.id,
+    name: raw.name || "",
+    email: raw.email || "",
+    activeRole: raw.activeRole || "rider",
+    roles: raw.roles || [],
+    phone: raw.phone || null,
+    vehicleModel: raw.vehicleModel || null,
+    vehicleNumber: raw.vehicleNumber || null,
+    vehicleColor: raw.vehicleColor || null,
+  };
+}
+
 const issueCookie = (res, user) =>
   issueAuthCookie(res, { userId: user._id, role: user.activeRole });
 
@@ -69,18 +88,13 @@ export const signup = async (req, res) => {
 // --- PASSPORT SUCCESS HANDLERS ---
 
 export const loginSuccess = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Authentication failed" });
+  }
+
   issueCookie(res, req.user);
-  res.status(200).json({
-    user: {
-      id: req.user._id,
-      name: req.user.name,
-      activeRole: req.user.activeRole,
-      phone: req.user.phone,
-      vehicleModel: req.user.vehicleModel,
-      vehicleNumber: req.user.vehicleNumber,
-      vehicleColor: req.user.vehicleColor,
-    },
-  });
+
+  return res.status(200).json({ user: buildUserResponse(req.user) });
 };
 
 export const googleCallback = (req, res) => {
@@ -98,21 +112,13 @@ export const logout = (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
-    if (!user) return res.status(404).json({ error: "User not found" });
-    res.status(200).json({
-      user: {
-        id: user._id,
-        name: user.name,
-        activeRole: user.activeRole,
-        roles: user.roles,
-        phone: user.phone,
-        vehicleModel: user.vehicleModel,
-        vehicleNumber: user.vehicleNumber,
-        vehicleColor: user.vehicleColor,
-      },
-    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json({ user: buildUserResponse(user) });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
